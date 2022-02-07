@@ -39,7 +39,7 @@ urlpatterns = [
     path('', include('teacher.urls')),
     path('api/', include('teacher.api.urls')),
     re_path('api/doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    re_path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    # re_path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
 
 
