@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <div class="container">
+    <form action="{% url 'teacher' %}" method="post">
+         <h1>Teacher Registration</h1>
+        {% csrf_token %}
+            {{ form.as_p }}
+        <input type="submit" class="btn btn-primary mb-3">
+
+    </form>
+    </div>
+
+    
+{% endblock %}
