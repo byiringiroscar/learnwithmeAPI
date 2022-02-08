@@ -6,12 +6,18 @@ from teacher.models import User
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
 from rest_framework import status
 
 
 class TeacherRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     email = serializers.EmailField(required=True)
+    phone_number = serializers.CharField(required=True)
 
     class Meta:
         model = User
@@ -22,6 +28,14 @@ class TeacherRegistrationSerializer(serializers.ModelSerializer):
 
     def save(self):
         email = self.validated_data['email']
+        phone_number = self.validated_data['phone_number']
+        res = phone_number.isalpha()
+        # import pdb
+        # pdb.set_trace()
+        # print("user is phone_number =======", res)
+        if not res:
+            raise serializers.ValidationError("phone number must be a string")
+
         if User.objects.filter(email=email, is_teacher=False, is_student=False):
             User.objects.filter(email=email).update(is_teacher=True)
         user = User(
@@ -179,4 +193,41 @@ class LoginTeacherSerializer(serializers.ModelSerializer):
                 'tokens': user.tokens  # this is from models function tokens
             }
 
+        return super().validate(attrs)
+
+
+class RequestPasswordEmailSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(min_length=2)
+
+    class Meta:
+        fields = ['email']
+        model = User
+
+
+class SetNewPasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        min_length=6, max_length=68, write_only=True)
+    token = serializers.CharField(
+        min_length=1, write_only=True)
+    uidb64 = serializers.CharField(
+        min_length=1, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['password', 'token', 'uidb64']
+
+    def validate(self, attrs):
+        try:
+            password = attrs.get('password')
+            token = attrs.get('token')
+            uidb64 = attrs.get('uidb64')
+            id = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(id=id)
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                raise AuthenticationFailed("The reset link is valid", 401)
+            user.set_password(password)
+            user.save()
+
+        except Exception as e:
+            raise AuthenticationFailed("The reset link is valid", 401)
         return super().validate(attrs)

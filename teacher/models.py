@@ -123,7 +123,52 @@ class StudentProfile(models.Model):
 
 class TeacherProfile(models.Model):
     user = models.OneToOneField(User, related_name='teacher_profile', on_delete=models.CASCADE)
+    age = models.DateField(blank=True, null=True)
 
     # additional fields for teachers
     def __str__(self):
         return f'{self.user.first_name} -- {self.user.email}'
+
+
+class Register_course(models.Model):
+    LEVEL_OPTIONS = [
+        ('BEGINNER', 'BEGINNER'),
+        ('INTERMEDIATE', 'INTERMEDIATE'),
+        ('EXPERT', 'EXPERT'),
+    ]
+
+    CATEGORY_OPTIONS = [
+        ('IT', 'IT'),
+        ('BUSINESS', 'BUSINESS'),
+        ('SPORT', 'SPORT'),
+    ]
+    course_owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    course_title = models.CharField(max_length=20)
+    course_subtitle = models.CharField(max_length=250)
+    course_description = models.TextField(max_length=250)
+    course_level = models.CharField(choices=LEVEL_OPTIONS, max_length=100)
+    course_category = models.CharField(choices=CATEGORY_OPTIONS, max_length=100)
+    course_image = models.ImageField(upload_to='images/', default='profile.png')
+    duration_week = models.IntegerField()
+    duration_day = models.IntegerField(default=3)
+
+    def __str__(self):
+        return f'{self.course_owner} --{self.course_title}'
+
+
+class Course_week(models.Model):
+    course = models.ForeignKey(Register_course, on_delete=models.CASCADE)
+    weeks = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f'{self.weeks}---{self.course.course_owner.email} ----{self.course.course_title}'
+
+
+class course_day(models.Model):
+    week = models.ForeignKey(Course_week, on_delete=models.CASCADE)
+    course_link = models.URLField(max_length=100)
+    course_video = models.ImageField(upload_to='images/')
+    course_text = models.TextField(max_length=250)
+
+    def __str__(self):
+        return f'{self.week.course.course_title} ---{self.week.course.course_owner.first_name}'

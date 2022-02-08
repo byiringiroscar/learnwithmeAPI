@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 # from teacher.models import StudentProfile, TeacherProfile
 from .forms import UserAdminCreationForm, UserAdminChangeForm
+from .models import TeacherProfile, Course_week, Register_course, course_day
 
 User = get_user_model()
 
@@ -40,5 +41,9 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(TeacherProfile)
+admin.site.register(Course_week)
+admin.site.register(Register_course)
+admin.site.register(course_day)
 # admin.site.register(TeacherProfile)
 # admin.site.register(StudentProfile)

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'phonenumber_field',
-    'teacher',
+    'teacher.apps.TeacherConfig',
     'rest_framework_simplejwt',
     'rest_framework',
     'drf_yasg',
