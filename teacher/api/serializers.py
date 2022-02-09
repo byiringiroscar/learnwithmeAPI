@@ -12,6 +12,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from rest_framework import status
+from teacher.models import Register_course
 
 
 class TeacherRegistrationSerializer(serializers.ModelSerializer):
@@ -231,3 +232,5 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
         except Exception as e:
             raise AuthenticationFailed("The reset link is valid", 401)
         return super().validate(attrs)
+
+

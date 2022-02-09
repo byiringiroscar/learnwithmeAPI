@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework',
     'drf_yasg',
+    'course'
 
 
 ]
@@ -133,6 +134,15 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
+}
 
 ROOT_URLCONF = 'learn_with_me.urls'
 
